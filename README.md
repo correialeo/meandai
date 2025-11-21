@@ -2,6 +2,12 @@
 
 API RESTful para gerenciamento de usuários, habilidades e trilhas de aprendizado com autenticação JWT, API Key e arquitetura limpa.
 
+👨‍💻Participantes
+-------------------
+- Julia Brito - RM 558831
+- Leandro Correia - RM 556203
+- Victor Antonopoulos - RM 556313
+
 ## 🏗️ Arquitetura
 
 O projeto segue os princípios da **Clean Architecture** com separação clara de responsabilidades:
@@ -370,10 +376,9 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 
 ## 📞 Suporte
 
-- **Issues**: [GitHub Issues](https://github.com/seu-usuario/meandai/issues)
-- **Email**: suporte@meandai.com
-- **Documentação**: `http://localhost:5231/swagger`
+- **Issues**: [GitHub Issues](https://github.com/correialeo/meandai/issues)
+- **Documentação**: `http://localhost:5000/swagger`
 
 ---
 
-**MeandAI** - Desenvolvido com ❤️ usando .NET 8.0 e Clean Architecture
+**MeandAI** - Desenvolvido usando .NET 8.0 e Clean Architecture
