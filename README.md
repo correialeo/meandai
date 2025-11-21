@@ -1,6 +1,6 @@
 # MeandAI
 
-API RESTful para gerenciamento de usuários, habilidades e trilhas de aprendizado com autenticação JWT e arquitetura limpa.
+API RESTful para gerenciamento de usuários, habilidades e trilhas de aprendizado com autenticação JWT, API Key e arquitetura limpa.
 
 ## 🏗️ Arquitetura
 
@@ -21,7 +21,8 @@ MeandAI/
 - **ASP.NET Core Web API** - API RESTful
 - **Entity Framework Core** - ORM
 - **SQL Server** - Banco de dados
-- **JWT Bearer Authentication** - Autenticação
+- **JWT Bearer Authentication** - Autenticação via Token
+- **API Key Authentication** - Autenticação via Header
 - **BCrypt.Net** - Hash de senhas
 - **Swagger/OpenAPI** - Documentação
 - **xUnit + Moq** - Testes unitários
@@ -64,6 +65,9 @@ JWT_KEY=sua_chave_secreta_muito_longa_aqui
 JWT_ISSUER=MeandAI
 JWT_AUDIENCE=MeandAI_Users
 JWT_TOKEN_EXPIRATION_HOURS=24
+
+# API Key Configuration
+API_KEY=sua_chave_de_api_secreta_aqui
 
 # Connection String
 ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=MeandAI;User Id=sa;Password=MeandAI@123456;TrustServerCertificate=true;
@@ -150,7 +154,11 @@ curl -X POST "http://localhost:5231/api/v1/users" \
 | `PUT` | `/api/v1/learning-paths/{id}` | Atualizar trilha | ✅ |
 | `DELETE` | `/api/v1/learning-paths/{id}` | Excluir trilha | ✅ |
 
-### Autenticação JWT
+### Autenticação
+
+A API suporta dois métodos de autenticação:
+
+#### 1. JWT Bearer Token
 
 1. Faça login para obter um token
 2. Inclua o token no header `Authorization` para acessar endpoints protegidos:
@@ -158,6 +166,41 @@ curl -X POST "http://localhost:5231/api/v1/users" \
 ```bash
 curl -X GET "http://localhost:5231/api/v1/users" \
   -H "Authorization: Bearer SEU_TOKEN_JWT_AQUI"
+```
+
+#### 2. API Key (Novo)
+
+Para acessos automatizados ou integrações de sistema:
+
+1. Configure a variável `API_KEY` no seu arquivo `.env`
+2. Inclua a key no header `X-API-Key`:
+
+```bash
+curl -X GET "http://localhost:5231/api/v1/users" \
+  -H "X-API-Key: SUA_API_KEY_AQUI"
+```
+
+**Prioridade de Autenticação:**
+- Se `X-API-Key` for fornecida e válida → usa API Key
+- Se não tiver API Key, mas tiver JWT válido → usa JWT
+- Se não tiver nenhum → retorna 401 (para endpoints protegidos)
+
+**Exemplos de uso:**
+
+```bash
+# Com API Key (prioridade)
+curl -X GET "http://localhost:5231/api/v1/users" \
+  -H "X-API-Key: sua-chave-secreta" \
+  -H "Authorization: Bearer token-jwt"  # ignorado se API Key for válida
+
+# Com JWT apenas
+curl -X GET "http://localhost:5231/api/v1/users" \
+  -H "Authorization: Bearer seu-token-jwt"
+
+# Sem autenticação (endpoint público)
+curl -X POST "http://localhost:5231/api/v1/users" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "João", "email": "joao@teste.com"}'
 ```
 
 ## 🧪 Testes
@@ -237,6 +280,8 @@ dotnet publish -c Release -o ./publish
 
 ## 🏛️ Fluxo de Autenticação
 
+### Método 1: JWT (Para usuários)
+
 1. **Registro de Usuário**
    - `POST /api/v1/users` (público)
    - Senha é criptografada com BCrypt
@@ -251,6 +296,21 @@ dotnet publish -c Release -o ./publish
    - Inclua `Authorization: Bearer {token}` nas requisições
    - Token é validado a cada requisição
    - Token expira em 24h (configurável)
+
+### Método 2: API Key (Para sistemas)
+
+1. **Configuração**
+   - Defina `API_KEY` no arquivo `.env`
+   - Chave deve ser mantida em segredo
+
+2. **Uso**
+   - Inclua `X-API-Key: {key}` nas requisições
+   - Válido para todos os endpoints protegidos
+   - Não expira, ideal para integrações automatizadas
+
+3. **Prioridade**
+   - API Key tem precedência sobre JWT
+   - Se ambos forem enviados, API Key será usada
 
 ## 📊 Estrutura do Banco de Dados
 
@@ -288,6 +348,7 @@ docker run -d -p 8080:8080 --name meandai-prod meandai-api
 Produção:
 - `ASPNETCORE_ENVIRONMENT=Production`
 - `JWT_KEY`: Use uma chave forte e única
+- `API_KEY`: Chave para autenticação via header
 - `ConnectionStrings__DefaultConnection`: String de conexão do banco
 
 ## 🤝 Contribuição
