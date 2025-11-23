@@ -22,8 +22,8 @@ else
     DB_SERVER_NAME="$DB_SERVER"
 fi
 DB_NAME="${DB_NAME:-meandai_db}"
-DB_ADMIN="${DB_USER:-adminuser}"
-DB_PASSWORD="${DB_PASSWORD:-Meandai@123!}"
+DB_ADMIN="${DB_USER:-meandai}"
+DB_PASSWORD="${DB_PASSWORD:-Meandai@2024#Complex!}"
 
 echo "📋 Configurações:"
 echo "Resource Group: $RESOURCE_GROUP"
