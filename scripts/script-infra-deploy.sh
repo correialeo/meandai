@@ -21,9 +21,9 @@ if [ -z "$DB_SERVER" ]; then
 else
     DB_SERVER_NAME="$DB_SERVER"
 fi
-DB_NAME="${DB_NAME:-meandai_db}"
-DB_ADMIN="${DB_USER:-meandai}"
-DB_PASSWORD="${DB_PASSWORD:-Meandai@2024#Complex!}"
+DB_NAME="${DB_NAME}"
+DB_ADMIN="${DB_USER}"
+DB_PASSWORD="${DB_PASSWORD}"
 
 echo "📋 Configurações:"
 echo "Resource Group: $RESOURCE_GROUP"
@@ -118,50 +118,39 @@ az acr repository show --name $ACR_NAME --image meandai-api:latest
 FINAL_IMAGE="$ACR_LOGIN_SERVER/meandai-api:latest"
 echo "✅ Imagem final: $FINAL_IMAGE"
 
-# ==================== CRIAR SQL SERVER E DATABASE ====================
-CREATE_DB=false
-echo "Verificando se o servidor SQL já existe..."
+# ==================== CRIAR SQL SERVER CONTAINER ====================
+echo ""
+echo "🗄️ Criando SQL Server Container..."
+SQL_CONTAINER_NAME="sqlserver-meandai"
 
-# Tentar criar o servidor SQL
-if [[ "$DB_SERVER_NAME" == *"$(date +%s)"* ]] || ! az sql server show --name $DB_SERVER_NAME --resource-group $RESOURCE_GROUP >/dev/null 2>&1; then
-    CREATE_DB=true
-    echo ""
-    echo "🗄️ Criando SQL Server: $DB_SERVER_NAME..."
-    
-    # Criando o servidor SQL, com verificação de erro
-    CREATE_SQL_SERVER_RESULT=$(az sql server create \
-        --name $DB_SERVER_NAME \
-        --resource-group $RESOURCE_GROUP \
-        --location "$LOCATION" \
-        --admin-user $DB_ADMIN \
-        --admin-password $DB_PASSWORD 2>&1)
-
-    # Verificando se houve falha
-    if echo "$CREATE_SQL_SERVER_RESULT" | grep -q "PasswordNotComplex"; then
-        echo "⚠️ Erro: A senha não atende à política de complexidade exigida."
-        echo "Detalhes do erro: $CREATE_SQL_SERVER_RESULT"
-        exit 1
-    fi
-
-    echo "✅ SQL Server criado com sucesso!"
-
-    echo "💾 Criando Database: $DB_NAME..."
-    az sql db create \
-        --resource-group $RESOURCE_GROUP \
-        --server $DB_SERVER_NAME \
-        --name $DB_NAME \
-        --service-objective Basic
-
-    echo "🔥 Configurando Firewall..."
-    az sql server firewall-rule create \
-        --resource-group $RESOURCE_GROUP \
-        --server $DB_SERVER_NAME \
-        --name AllowAzureServices \
-        --start-ip-address 0.0.0.0 \
-        --end-ip-address 0.0.0.0
+# Verificar se container já existe
+if az container show --resource-group $RESOURCE_GROUP --name $SQL_CONTAINER_NAME >/dev/null 2>&1; then
+    echo "SQL Server Container já existe: $SQL_CONTAINER_NAME"
 else
-    echo "SQL Server já existe: $DB_SERVER_NAME"
+    echo "Criando SQL Server Container..."
+    az container create \
+        --resource-group $RESOURCE_GROUP \
+        --name $SQL_CONTAINER_NAME \
+        --image mcr.microsoft.com/mssql/server:2022-latest \
+        --dns-name-label "sql-meandai-$(date +%s)" \
+        --ports 1433 \
+        --cpu 1.0 \
+        --memory 2.0 \
+        --environment-variables \
+            "ACCEPT_EULA=Y" \
+            "MSSQL_SA_PASSWORD=$DB_PASSWORD" \
+            "MSSQL_PID=Express" \
+        --restart-policy Always
+    
+    echo "✅ SQL Server Container criado!"
+    sleep 30
 fi
+
+# Obter FQDN do SQL Server
+SQL_FQDN=$(az container show --resource-group $RESOURCE_GROUP --name $SQL_CONTAINER_NAME --query "ipAddress.fqdn" --output tsv)
+SQL_SERVER_FULL="$SQL_FQDN,1433"
+
+echo "🔗 SQL Server Container: $SQL_SERVER_FULL"
 
 # ==================== DEPLOY CONTAINER INSTANCE ====================
 echo ""
@@ -176,7 +165,7 @@ echo ""
 echo "📱 Criando Container Instance no Azure (usando ACR)..."
 
 # String de conexão
-CONNECTION_STRING="Server=$DB_SERVER_NAME.database.windows.net;Database=$DB_NAME;User Id=$DB_ADMIN;Password=$DB_PASSWORD;TrustServerCertificate=true;Encrypt=true;"
+CONNECTION_STRING="Server=$SQL_SERVER_FULL;Database=$DB_NAME;User Id=sa;Password=$DB_PASSWORD;TrustServerCertificate=true;Encrypt=true;"
 
 # Criar container usando ACR
 az container create \
@@ -194,7 +183,7 @@ az container create \
         "ASPNETCORE_URLS=http://+:8080" \
         "ASPNETCORE_HTTP_PORTS=8080" \
         "DOTNET_RUNNING_IN_CONTAINER=true" \
-        "MEANDAI_DB_CONNECTION=Server=$DB_SERVER_NAME.database.windows.net;Database=$DB_NAME;User Id=$DB_ADMIN;Password=$DB_PASSWORD;TrustServerCertificate=true;Encrypt=true;" \
+        "MEANDAI_DB_CONNECTION=Server=$SQL_SERVER_FULL;Database=$DB_NAME;User Id=sa;Password=$DB_PASSWORD;TrustServerCertificate=true;Encrypt=true;" \
     --cpu 1.0 \
     --memory 2.0 \
     --os-type Linux \
@@ -224,9 +213,9 @@ echo "🌐 URL API: http://$FQDN:8080"
 echo "🔢 IP Público: $IP"
 echo "🐳 ACR: $ACR_LOGIN_SERVER"
 echo "📦 Imagem: $FINAL_IMAGE"
-echo "🗄️ SQL Server: $DB_SERVER_NAME.database.windows.net"
+echo "🗄️ SQL Server Container: $SQL_SERVER_FULL"
 echo "💾 Database: $DB_NAME"
-echo "👤 Usuário: $DB_ADMIN"
+echo "👤 Usuário: sa"
 echo ""
 echo "🧪 Comandos de teste:"
 echo "# Testar API via FQDN:"
