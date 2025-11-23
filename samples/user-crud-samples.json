@@ -1,0 +1,90 @@
+{
+  "create_user": {
+    "description": "Criar um novo usuário",
+    "method": "POST",
+    "endpoint": "/api/users",
+    "request": {
+      "name": "João Silva",
+      "email": "joao.silva@email.com",
+      "currentRole": "Desenvolvedor Junior",
+      "desiredArea": "Data Science",
+      "password": "senha123"
+    },
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "name": "João Silva",
+      "email": "joao.silva@email.com",
+      "currentRole": "Desenvolvedor Junior",
+      "desiredArea": "Data Science",
+      "createdAt": "2024-01-15T10:30:00Z"
+    }
+  },
+  "update_user": {
+    "description": "Atualizar perfil do usuário",
+    "method": "PUT",
+    "endpoint": "/api/users/{id}",
+    "request": {
+      "name": "João Silva Santos",
+      "currentRole": "Desenvolvedor Pleno",
+      "desiredArea": "Machine Learning"
+    },
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "name": "João Silva Santos",
+      "email": "joao.silva@email.com",
+      "currentRole": "Desenvolvedor Pleno",
+      "desiredArea": "Machine Learning",
+      "updatedAt": "2024-01-16T14:45:00Z"
+    }
+  },
+  "change_password": {
+    "description": "Alterar senha do usuário",
+    "method": "PUT",
+    "endpoint": "/api/users/{id}/password",
+    "request": {
+      "currentPassword": "senha123",
+      "newPassword": "novaSenha456"
+    },
+    "response": {
+      "message": "Senha alterada com sucesso"
+    }
+  },
+  "get_user": {
+    "description": "Obter detalhes do usuário",
+    "method": "GET",
+    "endpoint": "/api/users/{id}",
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "name": "João Silva Santos",
+      "email": "joao.silva@email.com",
+      "currentRole": "Desenvolvedor Pleno",
+      "desiredArea": "Machine Learning",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-16T14:45:00Z",
+      "skills": [
+        {
+          "skillId": "4fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "name": "Python",
+          "level": 3,
+          "updatedAt": "2024-01-15T11:20:00Z"
+        }
+      ],
+      "learningPaths": [
+        {
+          "learningPathId": "5fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "name": "Machine Learning Básico",
+          "status": "InProgress",
+          "startedAt": "2024-01-16T10:00:00Z"
+        }
+      ]
+    }
+  },
+  "delete_user": {
+    "description": "Remover usuário",
+    "method": "DELETE",
+    "endpoint": "/api/users/{id}",
+    "response": {
+      "message": "Usuário removido com sucesso"
+    }
+  }
+}
