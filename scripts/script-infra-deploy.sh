@@ -120,16 +120,30 @@ echo "✅ Imagem final: $FINAL_IMAGE"
 
 # ==================== CRIAR SQL SERVER E DATABASE ====================
 CREATE_DB=false
+echo "Verificando se o servidor SQL já existe..."
+
+# Tentar criar o servidor SQL
 if [[ "$DB_SERVER_NAME" == *"$(date +%s)"* ]] || ! az sql server show --name $DB_SERVER_NAME --resource-group $RESOURCE_GROUP >/dev/null 2>&1; then
     CREATE_DB=true
     echo ""
     echo "🗄️ Criando SQL Server: $DB_SERVER_NAME..."
-    az sql server create \
+    
+    # Criando o servidor SQL, com verificação de erro
+    CREATE_SQL_SERVER_RESULT=$(az sql server create \
         --name $DB_SERVER_NAME \
         --resource-group $RESOURCE_GROUP \
         --location "$LOCATION" \
         --admin-user $DB_ADMIN \
-        --admin-password $DB_PASSWORD
+        --admin-password $DB_PASSWORD 2>&1)
+
+    # Verificando se houve falha
+    if echo "$CREATE_SQL_SERVER_RESULT" | grep -q "PasswordNotComplex"; then
+        echo "⚠️ Erro: A senha não atende à política de complexidade exigida."
+        echo "Detalhes do erro: $CREATE_SQL_SERVER_RESULT"
+        exit 1
+    fi
+
+    echo "✅ SQL Server criado com sucesso!"
 
     echo "💾 Criando Database: $DB_NAME..."
     az sql db create \
