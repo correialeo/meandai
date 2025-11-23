@@ -21,29 +21,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(Settings.DatabaseConnectionString);
-string jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? "MeandAI_Default_Secret_Key_123456789";
-string jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "MeandAI";
-string jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "MeandAI_Users";
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtIssuer,
-        ValidAudience = jwtAudience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-    };
-});
-
+// Removemos autenticação JWT padrão, vamos usar middleware customizado
 builder.Services.AddControllers();
 
 builder.Services.AddApiVersioning(options =>
@@ -175,9 +154,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<ApiKeyMiddleware>();
-
-app.UseAuthentication();
+app.UseMiddleware<CombinedAuthMiddleware>();
 app.UseAuthorization();
 
 app.MapHealthChecks("/health");

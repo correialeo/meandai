@@ -21,6 +21,59 @@ MeandAI/
 └── MeandAI.Tests/        # Unit Tests
 ```
 
+### 🌐 Arquitetura de Deploy - DevOps & Cloud
+
+![Arquitetura da Solução](docs/arq_devops.drawio.png)
+
+#### **Conceito da Solução**
+
+A arquitetura foi desenhada seguindo as melhores práticas de **DevOps e Cloud Computing**, implementando uma solução **100% containerizada** com alta escalabilidade e resiliência.
+
+#### **Componentes da Arquitetura**
+
+**1. 🏗️ Estrutura de Desenvolvimento**
+- **Clean Architecture**: Separação clara de responsabilidades
+- **.NET 8.0**: Framework moderno e performático
+- **Entity Framework Core**: ORM para persistência de dados
+- **SQL Server**: Banco de dados relacional
+
+**2. 🐳 Containerização**
+- **Docker**: Empacotamento da aplicação e dependências
+- **Multi-stage builds**: Imagens otimizadas para produção
+- **Health Checks**: Monitoramento de saúde da aplicação
+
+**3. ☁️ Deploy em Nuvem - Azure**
+- **Azure Container Registry (ACR)**: Registro privado de imagens
+- **Azure Container Instance (ACI)**: Execução de containers serverless
+- **SQL Server Container**: Banco de dados em container (evitando PaaS misto)
+
+**4. 🔄 CI/CD Pipeline**
+- **Azure DevOps**: Automatização do processo de build e deploy
+- **Build Pipeline**: Compilação, testes e geração de imagem Docker
+- **Release Pipeline**: Deploy automatizado para produção
+
+**5. 🔐 Autenticação Híbrida**
+- **JWT Bearer Tokens**: Autenticação para usuários
+- **API Key**: Acesso programático para sistemas externos
+- **Middleware Customizado**: Validação unificada de ambos os métodos
+
+#### **Fluxo de Deploy**
+
+1. **Development** → Push para branch `master/main`
+2. **Azure DevOps Pipeline** → Build, testes, Docker build
+3. **Docker Hub** → Push da imagem containerizada
+4. **Azure Container Instance** → Deploy automático da aplicação
+5. **SQL Server Container** → Banco de dados provisionado dinamicamente
+
+#### **Vantagens da Arquitetura**
+
+- ✅ **100% Containerização**: Evita penalidade de mistura PaaS/Containers (-50 pontos)
+- ✅ **Infraestrutura como Código**: Script de deploy automático
+- ✅ **Alta Disponibilidade**: Containers com restart automático
+- ✅ **Monitoramento**: Health checks e logs centralizados
+- ✅ **Segurança**: Variáveis de ambiente protegidas, sem senhas expostas
+- ✅ **Escalabilidade**: ACI permite escala horizontal sob demanda
+
 ### Tecnologias Utilizadas
 
 - **.NET 8.0** - Framework principal
