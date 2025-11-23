@@ -3,9 +3,11 @@ using MeandAI.Api;
 using MeandAI.Api.Middleware;
 using MeandAI.Application;
 using MeandAI.Infrastructure;
+using MeandAI.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
@@ -140,6 +142,26 @@ builder.Services.AddOpenTelemetry()
         .AddOtlpExporter());
 
 WebApplication app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<MeandAIDbContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("Aplicando migrations pendentes...");
+        context.Database.Migrate();
+        logger.LogInformation("Migrations aplicadas com sucesso!");
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Erro ao aplicar migrations.");
+        throw;
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
