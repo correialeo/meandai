@@ -68,7 +68,7 @@ stages:
     - task: Docker@2
       displayName: 'Build Docker Image'
       inputs:
-        containerRegistry: 'a40a5539-324b-4890-9497-063eb275b912'
+        containerRegistry: '33638cbd-8216-4fb8-b41d-8d1b8bf35507'
         repository: 'correialeo/meandai.api'
         command: 'build'
         Dockerfile: 'dockerfiles/Dockerfile'
@@ -82,7 +82,7 @@ stages:
     - task: Docker@2
       displayName: 'Push Docker Image'
       inputs:
-        containerRegistry: 'a40a5539-324b-4890-9497-063eb275b912'
+        containerRegistry: '33638cbd-8216-4fb8-b41d-8d1b8bf35507'
         repository: 'correialeo/meandai.api'
         command: 'push'
         tags: |
