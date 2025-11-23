@@ -136,6 +136,7 @@ else
         --ports 1433 \
         --cpu 1.0 \
         --memory 2.0 \
+        --os-type Linux \
         --environment-variables \
             "ACCEPT_EULA=Y" \
             "MSSQL_SA_PASSWORD=$DB_PASSWORD" \
