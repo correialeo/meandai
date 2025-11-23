@@ -1,0 +1,105 @@
+trigger:
+  branches:
+    include:
+    - master
+    - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  dockerImageName: 'meandai-api'
+
+stages:
+- stage: Build
+  displayName: 'Build and Test'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build, Test and Publish'
+    steps:
+    
+    # Checkout do código
+    - checkout: self
+      fetchDepth: 1
+    
+    # Setup do .NET
+    - task: UseDotNet@2
+      displayName: 'Install .NET SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '8.x'
+    
+    # Restaurar dependências
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore dependencies'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+    
+    # Build da aplicação
+    - task: DotNetCoreCLI@2
+      displayName: 'Build application'
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--configuration $(buildConfiguration) --no-restore'
+    
+    # ⭐ EXECUTAR TESTES
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Unit Tests'
+      inputs:
+        command: 'test'
+        projects: '**/MeandAI.Tests/*.csproj'
+        arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage" --logger trx'
+        publishTestResults: true
+    
+    # Publicar resultados dos testes
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/*.trx'
+        mergeTestResults: true
+        failTaskOnFailedTests: true
+      condition: succeededOrFailed()
+    
+    # Build da imagem Docker
+    - task: Docker@2
+      displayName: 'Build Docker Image'
+      inputs:
+        containerRegistry: 'a40a5539-324b-4890-9497-063eb275b912'
+        repository: 'correialeo/meandai.api'
+        command: 'build'
+        Dockerfile: 'dockerfiles/Dockerfile'
+        buildContext: '.'
+        tags: |
+          latest
+          $(Build.BuildId)
+        arguments: '--build-arg BUILDCONFIG=$(buildConfiguration)'
+    
+    # Push da imagem Docker
+    - task: Docker@2
+      displayName: 'Push Docker Image'
+      inputs:
+        containerRegistry: 'a40a5539-324b-4890-9497-063eb275b912'
+        repository: 'correialeo/meandai.api'
+        command: 'push'
+        tags: |
+          latest
+          $(Build.BuildId)
+    
+    # Copiar script de deploy para staging
+    - task: CopyFiles@2
+      displayName: 'Copy deployment script'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: 'scripts/script-infra-deploy.sh'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build Artifacts'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
