@@ -1,0 +1,123 @@
+{
+  "create_skill": {
+    "description": "Criar uma nova habilidade",
+    "method": "POST",
+    "endpoint": "/api/skills",
+    "request": {
+      "name": "Python",
+      "category": "Linguagem de Programação",
+      "description": "Linguagem de programação de alto nível"
+    },
+    "response": {
+      "id": "6fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "name": "Python",
+      "category": "Linguagem de Programação",
+      "description": "Linguagem de programação de alto nível",
+      "createdAt": "2024-01-15T10:30:00Z"
+    }
+  },
+  "update_skill": {
+    "description": "Atualizar uma habilidade existente",
+    "method": "PUT",
+    "endpoint": "/api/skills/{id}",
+    "request": {
+      "name": "Python 3",
+      "category": "Linguagens de Programação",
+      "description": "Linguagem de programação de alto nível e propósito geral"
+    },
+    "response": {
+      "id": "6fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "name": "Python 3",
+      "category": "Linguagens de Programação",
+      "description": "Linguagem de programação de alto nível e propósito geral",
+      "updatedAt": "2024-01-16T14:45:00Z"
+    }
+  },
+  "get_skill": {
+    "description": "Obter detalhes de uma habilidade",
+    "method": "GET",
+    "endpoint": "/api/skills/{id}",
+    "response": {
+      "id": "6fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "name": "Python 3",
+      "category": "Linguagens de Programação",
+      "description": "Linguagem de programação de alto nível e propósito geral",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-16T14:45:00Z"
+    }
+  },
+  "list_skills": {
+    "description": "Listar todas as habilidades",
+    "method": "GET",
+    "endpoint": "/api/skills",
+    "query_parameters": {
+      "page": 1,
+      "pageSize": 10,
+      "category": "Linguagens de Programação"
+    },
+    "response": {
+      "items": [
+        {
+          "id": "6fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "name": "Python 3",
+          "category": "Linguagens de Programação",
+          "description": "Linguagem de programação de alto nível e propósito geral"
+        },
+        {
+          "id": "7fa85f64-5717-4562-b3fc-2c963f66afa7",
+          "name": "JavaScript",
+          "category": "Linguagens de Programação",
+          "description": "Linguagem de programação para desenvolvimento web"
+        }
+      ],
+      "totalCount": 2,
+      "page": 1,
+      "pageSize": 10
+    }
+  },
+  "delete_skill": {
+    "description": "Remover uma habilidade",
+    "method": "DELETE",
+    "endpoint": "/api/skills/{id}",
+    "response": {
+      "message": "Habilidade removida com sucesso"
+    }
+  },
+  "add_skill_to_user": {
+    "description": "Adicionar uma habilidade a um usuário",
+    "method": "POST",
+    "endpoint": "/api/users/{userId}/skills",
+    "request": {
+      "skillId": "6fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "level": 3
+    },
+    "response": {
+      "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "skillId": "6fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "level": 3,
+      "updatedAt": "2024-01-17T09:15:00Z"
+    }
+  },
+  "update_user_skill_level": {
+    "description": "Atualizar nível de uma habilidade do usuário",
+    "method": "PUT",
+    "endpoint": "/api/users/{userId}/skills/{skillId}",
+    "request": {
+      "level": 4
+    },
+    "response": {
+      "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "skillId": "6fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "level": 4,
+      "updatedAt": "2024-01-18T11:30:00Z"
+    }
+  },
+  "remove_skill_from_user": {
+    "description": "Remover uma habilidade de um usuário",
+    "method": "DELETE",
+    "endpoint": "/api/users/{userId}/skills/{skillId}",
+    "response": {
+      "message": "Habilidade removida do usuário com sucesso"
+    }
+  }
+}

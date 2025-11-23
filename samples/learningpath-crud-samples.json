@@ -1,0 +1,228 @@
+{
+  "create_learning_path": {
+    "description": "Criar um novo Learning Path",
+    "method": "POST",
+    "endpoint": "/api/learning-paths",
+    "request": {
+      "name": "Introdução ao Machine Learning",
+      "targetArea": "Data Science",
+      "description": "Aprenda os conceitos básicos de Machine Learning"
+    },
+    "response": {
+      "id": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "name": "Introdução ao Machine Learning",
+      "targetArea": "Data Science",
+      "description": "Aprenda os conceitos básicos de Machine Learning",
+      "createdAt": "2024-01-15T10:30:00Z"
+    }
+  },
+  "update_learning_path": {
+    "description": "Atualizar um Learning Path existente",
+    "method": "PUT",
+    "endpoint": "/api/learning-paths/{id}",
+    "request": {
+      "name": "Introdução ao Machine Learning com Python",
+      "targetArea": "Data Science",
+      "description": "Aprenda os conceitos básicos de Machine Learning com Python"
+    },
+    "response": {
+      "id": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "name": "Introdução ao Machine Learning com Python",
+      "targetArea": "Data Science",
+      "description": "Aprenda os conceitos básicos de Machine Learning com Python",
+      "updatedAt": "2024-01-16T14:45:00Z"
+    }
+  },
+  "get_learning_path": {
+    "description": "Obter detalhes de um Learning Path",
+    "method": "GET",
+    "endpoint": "/api/learning-paths/{id}",
+    "response": {
+      "id": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "name": "Introdução ao Machine Learning com Python",
+      "targetArea": "Data Science",
+      "description": "Aprenda os conceitos básicos de Machine Learning com Python",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-16T14:45:00Z",
+      "steps": [
+        {
+          "id": "9fa85f64-5717-4562-b3fc-2c963f66afa9",
+          "title": "Introdução ao Machine Learning",
+          "description": "Conceitos básicos e aplicações",
+          "order": 1,
+          "estimatedHours": 4
+        },
+        {
+          "id": "afa85f64-5717-4562-b3fc-2c963f66afb0",
+          "title": "Pré-processamento de Dados",
+          "description": "Técnicas de limpeza e preparação de dados",
+          "order": 2,
+          "estimatedHours": 6
+        }
+      ]
+    }
+  },
+  "list_learning_paths": {
+    "description": "Listar todos os Learning Paths",
+    "method": "GET",
+    "endpoint": "/api/learning-paths",
+    "query_parameters": {
+      "page": 1,
+      "pageSize": 10,
+      "targetArea": "Data Science"
+    },
+    "response": {
+      "items": [
+        {
+          "id": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+          "name": "Introdução ao Machine Learning com Python",
+          "targetArea": "Data Science",
+          "description": "Aprenda os conceitos básicos de Machine Learning com Python",
+          "totalSteps": 5,
+          "totalHours": 30
+        },
+        {
+          "id": "bfa85f64-5717-4562-b3fc-2c963f66afb1",
+          "name": "Desenvolvimento Web Full Stack",
+          "targetArea": "Desenvolvimento Web",
+          "description": "Aprenda a desenvolver aplicações web completas",
+          "totalSteps": 8,
+          "totalHours": 60
+        }
+      ],
+      "totalCount": 2,
+      "page": 1,
+      "pageSize": 10
+    }
+  },
+  "delete_learning_path": {
+    "description": "Remover um Learning Path",
+    "method": "DELETE",
+    "endpoint": "/api/learning-paths/{id}",
+    "response": {
+      "message": "Learning Path removido com sucesso"
+    }
+  },
+  "add_step_to_learning_path": {
+    "description": "Adicionar um passo ao Learning Path",
+    "method": "POST",
+    "endpoint": "/api/learning-paths/{id}/steps",
+    "request": {
+      "title": "Introdução ao Pandas",
+      "description": "Manipulação de dados com a biblioteca Pandas",
+      "order": 3,
+      "estimatedHours": 5,
+      "externalUrl": "https://example.com/pandas-tutorial"
+    },
+    "response": {
+      "id": "cfa85f64-5717-4562-b3fc-2c963f66afb2",
+      "learningPathId": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "title": "Introdução ao Pandas",
+      "description": "Manipulação de dados com a biblioteca Pandas",
+      "order": 3,
+      "estimatedHours": 5,
+      "externalUrl": "https://example.com/pandas-tutorial"
+    }
+  },
+  "update_step": {
+    "description": "Atualizar um passo do Learning Path",
+    "method": "PUT",
+    "endpoint": "/api/learning-paths/{id}/steps/{stepId}",
+    "request": {
+      "title": "Introdução ao Pandas e NumPy",
+      "description": "Manipulação de dados com Pandas e NumPy",
+      "order": 3,
+      "estimatedHours": 6,
+      "externalUrl": "https://example.com/pandas-numpy-tutorial"
+    },
+    "response": {
+      "id": "cfa85f64-5717-4562-b3fc-2c963f66afb2",
+      "learningPathId": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "title": "Introdução ao Pandas e NumPy",
+      "description": "Manipulação de dados com Pandas e NumPy",
+      "order": 3,
+      "estimatedHours": 6,
+      "externalUrl": "https://example.com/pandas-numpy-tutorial",
+      "updatedAt": "2024-01-17T11:30:00Z"
+    }
+  },
+  "remove_step": {
+    "description": "Remover um passo do Learning Path",
+    "method": "DELETE",
+    "endpoint": "/api/learning-paths/{id}/steps/{stepId}",
+    "response": {
+      "message": "Passo removido com sucesso"
+    }
+  },
+  "enroll_user": {
+    "description": "Inscrever um usuário em um Learning Path",
+    "method": "POST",
+    "endpoint": "/api/users/{userId}/learning-paths",
+    "request": {
+      "learningPathId": "8fa85f64-5717-4562-b3fc-2c963f66afa8"
+    },
+    "response": {
+      "id": "dfa85f64-5717-4562-b3fc-2c963f66afb3",
+      "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "learningPathId": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "status": "NotStarted",
+      "createdAt": "2024-01-18T09:15:00Z"
+    }
+  },
+  "update_enrollment_status": {
+    "description": "Atualizar o status de inscrição de um usuário em um Learning Path",
+    "method": "PUT",
+    "endpoint": "/api/users/{userId}/learning-paths/{learningPathId}/status",
+    "request": {
+      "status": "InProgress"
+    },
+    "response": {
+      "id": "dfa85f64-5717-4562-b3fc-2c963f66afb3",
+      "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "learningPathId": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "status": "InProgress",
+      "startedAt": "2024-01-19T10:30:00Z"
+    }
+  },
+  "complete_enrollment": {
+    "description": "Marcar um Learning Path como concluído para um usuário",
+    "method": "POST",
+    "endpoint": "/api/users/{userId}/learning-paths/{learningPathId}/complete",
+    "response": {
+      "id": "dfa85f64-5717-4562-b3fc-2c963f66afb3",
+      "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "learningPathId": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "status": "Completed",
+      "completedAt": "2024-01-20T15:45:00Z"
+    }
+  },
+  "get_user_progress": {
+    "description": "Obter progresso de um usuário em um Learning Path",
+    "method": "GET",
+    "endpoint": "/api/users/{userId}/learning-paths/{learningPathId}/progress",
+    "response": {
+      "learningPathId": "8fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "learningPathName": "Introdução ao Machine Learning com Python",
+      "status": "InProgress",
+      "startedAt": "2024-01-19T10:30:00Z",
+      "completedAt": null,
+      "totalSteps": 5,
+      "completedSteps": 2,
+      "progressPercentage": 40,
+      "totalHours": 30,
+      "completedHours": 10,
+      "currentStep": {
+        "id": "afa85f64-5717-4562-b3fc-2c963f66afb0",
+        "title": "Pré-processamento de Dados",
+        "order": 2,
+        "status": "InProgress"
+      },
+      "nextStep": {
+        "id": "cfa85f64-5717-4562-b3fc-2c963f66afb2",
+        "title": "Introdução ao Pandas e NumPy",
+        "order": 3,
+        "status": "NotStarted"
+      }
+    }
+  }
+}
